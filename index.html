@@ -311,6 +311,46 @@
                     </td>
                 </tr>
                 <tr>
+                    <th scope="row">Shock Stacks</th>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" max="3" ng-model="shock" ng-change="updateHash()" class="form-control">
+                            <span class="input-group-addon">{{ shock * shock_value }}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        {{
+                        (
+                        ( player_attr.hp / 2 )
+                        + ( player_attr.es / 2 )
+                        )
+                        * ( 1 + (
+                        (
+                        player_attr.gic
+                        + player_attr.bd
+                        + player_attr.fd
+                        + player_attr.ad
+                        + player_attr.dot
+                        + gem_bd_selected
+                        ) / 100
+                        ) )
+                        * ( 1 + (
+                        (
+                        gem_ce_selected
+                        + ( shock * shock_value )
+                        ) / 100
+                        ) )
+                        * ( 1 + (
+                        (
+                        curse_f_selected
+                        + curse_ew_selected
+                        + curse_ew_quality_selected
+                        ) / 100
+                        ) )
+                        }}
+                    </td>
+                </tr>
+                <tr>
                     <th scope="row">Curse Vulnerability</th>
                     <td>
                         <div class="input-group">
@@ -339,6 +379,7 @@
     * ( 1 + (
         (
             gem_ce_selected
+          + ( shock * shock_value )
           + ( curse_v * curse_v_value )
         ) / 100
     ) )
@@ -573,6 +614,9 @@
                 $scope.curse_ee = 0;
                 $scope.curse_ee_value = 50;
 
+                $scope.shock = 0;
+                $scope.shock_value = 30;
+
                 $scope.updateHash = function() {
                     var parameters = {
                         hp: $scope.player_attr.hp,
@@ -588,7 +632,8 @@
                         cew: $scope.curse_ew_selected,
                         cewq: $scope.curse_ew_quality_selected,
                         cv: $scope.curse_v,
-                        cee: $scope.curse_ee
+                        cee: $scope.curse_ee,
+                        shock: $scope.shock
                     };
                     $location.search(parameters);
                 }
@@ -651,6 +696,10 @@
 
                     if (locSearch.cee) {
                         $scope.curse_ee = parseInt(locSearch.cee);
+                    }
+
+                    if (locSearch.shock) {
+                        $scope.shock = parseInt(locSearch.shock);
                     }
                 }
 
