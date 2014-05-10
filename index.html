@@ -1,11 +1,14 @@
 <html ng-app="rfcalc">
-    <head>
-        <meta charset="utf8" />
-        <title>Righteous Fire Calculator</title>
-        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-    </head>
-    <body>
-        <table class="table" ng-controller="MainCtrl" style="width: 900px">
+<head>
+    <meta charset="utf8"/>
+    <title>Righteous Fire Calculator</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+</head>
+<body>
+<div ng-controller="MainCtrl" style="width: 1000px; margin:0 auto;">
+<tabset>
+    <tab heading="Outgoing Damage">
+        <table class="table" style="width: 900px">
             <thead>
                 <tr>
                     <th style="width: 300px;">Stat</th>
@@ -17,23 +20,26 @@
                 <tr>
                     <th scope="row">Player HP</th>
                     <td>
-                        <input type="number" value="1000" ng-model="player_attr.hp" ng-change="updateHash()" class="form-control">
+                        <input type="number" value="1000" ng-model="player_attr.hp" ng-change="updateHash()"
+                               class="form-control"
+                               popover="50% of your HP will be converted to damage" popover-trigger="focus">
                     </td>
                     <td>
                         {{
-                            ( player_attr.hp / 2 )
+                        calculateBaseDamage(player_attr.hp)
                         }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Player Energy Shield</th>
                     <td>
-                        <input type="number" value="0" ng-model="player_attr.es" ng-change="updateHash()" class="form-control">
+                        <input type="number" value="0" ng-model="player_attr.es" ng-change="updateHash()"
+                               class="form-control"
+                               popover="50% of your Energy Shield will be converted to damage" popover-trigger="focus">
                     </td>
                     <td>
                         {{
-                            ( player_attr.hp / 2 )
-                          + ( player_attr.es / 2 )
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
                         }}
                     </td>
                 </tr>
@@ -41,671 +47,699 @@
                     <th scope="row">Global Damage Increase</th>
                     <td>
                         <div class="input-group">
-                            <input type="number" value="0" ng-model="player_attr.gic" ng-change="updateHash()" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.gic" ng-change="updateHash()"
+                                   class="form-control"
+                                   popover="The sum of your global damage increase. This could be values from Snapshotting Items like Redbreaks or the Leer Cast Aura" popover-trigger="focus">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic)
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Burn Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="number" value="0" ng-model="player_attr.bd" ng-change="updateHash()" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.bd" ng-change="updateHash()"
+                                   class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd)
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Fire Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="number" value="0" ng-model="player_attr.fd" ng-change="updateHash()" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.fd" ng-change="updateHash()"
+                                   class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd)
+                        }}
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Global Elemental Damage</th>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" value="0" ng-model="player_attr.ed" ng-change="updateHash()"
+                                   class="form-control">
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </td>
+                    <td>
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed)
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Area Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="number" value="0" ng-model="player_attr.ad" ng-change="updateHash()" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.ad" ng-change="updateHash()"
+                                   class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad)
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Damage Over Time</th>
                     <td>
                         <div class="input-group">
-                            <input type="number" value="0" ng-model="player_attr.dot" ng-change="updateHash()" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.dot" ng-change="updateHash()"
+                                   class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-        ) / 100
-    ) )
-}}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Gem Concentrated Effect</th>
-                    <td>
-                        <select ng-model="gem_ce_selected" ng-options="ce.value as ce.text for ce in gem_ce" ng-change="updateHash()" class="form-control">
-                        </select>
-                    </td>
-                    <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-        ) / 100
-    ) )
-    * ( 1 + ( gem_ce_selected / 100 ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot)
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Gem Increased Burning Damage</th>
                     <td>
-                        <select ng-model="gem_bd_selected" ng-options="bd.value as bd.text for bd in gem_bd" ng-change="updateHash()" class="form-control">
+                        <select ng-model="gem_bd_selected" ng-options="bd.value as bd.text for bd in gem_bd"
+                                ng-change="updateHash()"
+                                class="form-control">
                         </select>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-          + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + (
-        gem_ce_selected / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        }}
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
-                        <strong>Disclaimer</strong>: Curses here are Damage Multiplicators. For the theoretic model this
-                        perfectly fine but in game it doesn't really increase your damage but rather increases the
-                        damage the enemy receives, which would otherwise be mitigated by their resistances.
+                    <th scope="row">Gem Concentrated Effect</th>
+                    <td>
+                        <select ng-model="gem_ce_selected" ng-options="ce.value as ce.text for ce in gem_ce"
+                                ng-change="updateHash()"
+                                class="form-control">
+                        </select>
+                    </td>
+                    <td>
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        }}
                     </td>
                 </tr>
+            </tbody>
+        </table>
+    </tab>
+    <tab heading="Mob Resistance & Curses">
+        <h2>Damage Taken Modifiers</h2>
+        <table class="table" style="width: 900px">
+            <thead>
+                <tr>
+                    <th style="width: 300px;">Stat</th>
+                    <th style="width: 350px;">Value</th>
+                    <th style="width: 250px;">Current Righteous Fire DPS</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">Shock Stacks</th>
+                <td>
+                    <div class="input-group">
+                        <input type="number" max="3" ng-model="shock" ng-change="updateHash()" class="form-control">
+                        <span class="input-group-addon">{{ shock * shock_value }}%</span>
+                    </div>
+                </td>
+                <td>
+                    {{
+                    calculateBaseDamage(player_attr.hp, player_attr.es)
+                    * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                    * calculateMoreMultipliers(gem_ce_selected)
+                    * calculateDamageTakenMultipliers(shock)
+                    }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">Curse Vulnerability</th>
+                <td>
+                    <div class="input-group">
+                        <button type="button" class="btn btn-primary form-control" ng-model="curse_v" ng-change="updateHash()" btn-checkbox
+                                btn-checkbox-true="1" btn-checkbox-false="0">
+                            Toggle
+                        </button>
+                        <span class="input-group-addon">{{curse_v * curse_v_value}}% damage increase</span>
+                    </div>
+                </td>
+                <td>
+                    {{
+                    calculateBaseDamage(player_attr.hp, player_attr.es)
+                    * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                    * calculateMoreMultipliers(gem_ce_selected)
+                    * calculateDamageTakenMultipliers(shock, curse_v)
+                    }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2>Mob Resistances</h2>
+        <table class="table" style="width: 900px">
+            <thead>
+                <tr>
+                    <th style="width: 300px;">&nbsp;</th>
+                    <th style="width: 350px;">&nbsp;</th>
+                    <th style="width: 250px;">Current Righteous Fire DPS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Set Base Resistance</th>
+                    <td>
+                        <div class="btn-group">
+                            <label class="btn btn-default" ng-model="resist_base" ng-change="updateHash()" btn-radio="0">0%</label>
+                            <label class="btn btn-success" ng-model="resist_base" ng-change="updateHash()" btn-radio="25">25%</label>
+                            <label class="btn btn-warning" ng-model="resist_base" ng-change="updateHash()" btn-radio="50">50%</label>
+                            <label class="btn btn-danger" ng-model="resist_base" ng-change="updateHash()" btn-radio="75">75%</label>
+                            <span class="input-group-addon">{{ resist_base }}% reduction</span>
+                        </div>
+                    </td>
+                    <td>
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        * calculateDamageTakenMultipliers(shock, curse_v)
+                        * calculateResistedMultiplier(resist_base, calculateCurses())
+                        }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Curses</h2>
+        <table class="table" style="width: 900px">
+            <thead>
+                <tr>
+                    <th style="width: 300px;">Stat</th>
+                    <th style="width: 350px;">Value</th>
+                    <th style="width: 250px;">Current Righteous Fire DPS</th>
+                </tr>
+            </thead>
+            <tbody>
                 <tr>
                     <th scope="row">Curse Flamability</th>
                     <td>
-                        <select ng-model="curse_f_selected" ng-options="f.value as f.text for f in curse_f" ng-change="updateHash()" class="form-control">
+                        <select ng-model="curse_f_selected" ng-options="f.value as f.text for f in curse_f" ng-change="updateHash()"
+                                class="form-control">
                         </select>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-          + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + ( gem_ce_selected / 100 ) )
-    * ( 1 + (
-        (
-            curse_f_selected
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        * calculateDamageTakenMultipliers(shock, curse_v)
+                        * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected))
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Curse Elemental Weakness</th>
                     <td>
-                        <select ng-model="curse_ew_selected" ng-options="ew.value as ew.text for ew in curse_ew" ng-change="updateHash()" class="form-control">
+                        <select ng-model="curse_ew_selected" ng-options="ew.value as ew.text for ew in curse_ew"
+                                ng-change="updateHash()" class="form-control">
                         </select>
-                        <br />
-                        <select ng-model="curse_ew_quality_selected" ng-options="ewq.value as ewq.text for ewq in curse_ew_quality" ng-change="updateHash()" class="form-control">
+                        <br/>
+                        <select ng-model="curse_ew_quality_selected" ng-options="ewq.value as ewq.text for ewq in curse_ew_quality"
+                                ng-change="updateHash()" class="form-control">
                         </select>
-                    </td>
-                    <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-          + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + ( gem_ce_selected / 100 ) )
-    * ( 1 + (
-        (
-            curse_f_selected
-          + curse_ew_selected
-        ) / 100
-    ) )
-}}
-                        <br />
-                        <br />
-                        <br />
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-          + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + ( gem_ce_selected / 100 ) )
-    * ( 1 + (
-        (
-            curse_f_selected
-          + curse_ew_selected
-          + curse_ew_quality_selected
-        ) / 100
-    ) )
-}}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Shock Stacks</th>
-                    <td>
-                        <div class="input-group">
-                            <input type="number" max="3" ng-model="shock" ng-change="updateHash()" class="form-control">
-                            <span class="input-group-addon">{{ shock * shock_value }}%</span>
-                        </div>
                     </td>
                     <td>
                         {{
-                        (
-                        ( player_attr.hp / 2 )
-                        + ( player_attr.es / 2 )
-                        )
-                        * ( 1 + (
-                        (
-                        player_attr.gic
-                        + player_attr.bd
-                        + player_attr.fd
-                        + player_attr.ad
-                        + player_attr.dot
-                        + gem_bd_selected
-                        ) / 100
-                        ) )
-                        * ( 1 + (
-                        (
-                        gem_ce_selected
-                        + ( shock * shock_value )
-                        ) / 100
-                        ) )
-                        * ( 1 + (
-                        (
-                        curse_f_selected
-                        + curse_ew_selected
-                        + curse_ew_quality_selected
-                        ) / 100
-                        ) )
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        * calculateDamageTakenMultipliers(shock, curse_v)
+                        * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected))
                         }}
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">Curse Vulnerability</th>
-                    <td>
-                        <div class="input-group">
-                            <button type="button" class="btn btn-primary" ng-model="curse_v" ng-change="updateHash()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-                                Toggle
-                            </button>
-                            <span class="input-group-addon">{{curse_v * curse_v_value}}% damage increase</span>
-                        </div>
-                    </td>
-                    <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-        + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-            + player_attr.bd
-            + player_attr.fd
-            + player_attr.ad
-            + player_attr.dot
-            + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + (
-        (
-            gem_ce_selected
-          + ( shock * shock_value )
-          + ( curse_v * curse_v_value )
-        ) / 100
-    ) )
-    * ( 1 + (
-        (
-            curse_f_selected
-            + curse_ew_selected
-            + curse_ew_quality_selected
-        ) / 100
-    ) )
-}}
+                        <br/>
+                        <br/>
+                        <br/>
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        * calculateDamageTakenMultipliers(shock, curse_v)
+                        * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected))
+                        }}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Elemental Equilibrium</th>
                     <td>
                         <div class="input-group">
-                            <button type="button" class="btn btn-primary" ng-model="curse_ee" ng-change="updateHash()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+                            <button type="button" class="btn btn-primary form-control" ng-model="curse_ee" ng-change="updateHash()" btn-checkbox
+                                    btn-checkbox-true="1" btn-checkbox-false="0">
                                 Toggle
                             </button>
                             <span class="input-group-addon">{{curse_ee * curse_ee_value}}% reduced fire resistance</span>
                         </div>
                     </td>
                     <td>
-{{
-    (
-        ( player_attr.hp / 2 )
-      + ( player_attr.es / 2 )
-    )
-    * ( 1 + (
-        (
-            player_attr.gic
-          + player_attr.bd
-          + player_attr.fd
-          + player_attr.ad
-          + player_attr.dot
-          + gem_bd_selected
-        ) / 100
-    ) )
-    * ( 1 + (
-        (
-            gem_ce_selected
-          + ( curse_v * curse_v_value )
-        ) / 100
-    ) )
-    * ( 1 + (
-        (
-            curse_f_selected
-          + curse_ew_selected
-          + curse_ew_quality_selected
-          + ( curse_ee * curse_ee_value )
-        ) / 100
-    ) )
-}}
+                        {{
+                        calculateBaseDamage(player_attr.hp, player_attr.es)
+                        * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
+                        * calculateDamageTakenMultipliers(shock, curse_v)
+                        * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
+                        }}
                     </td>
                 </tr>
             </tbody>
         </table>
+    </tab>
+    <tab disabled="true">
+        <tab-heading>
+            <strong>
+                Final-DPS: {{
+                calculateBaseDamage(player_attr.hp, player_attr.es)
+                * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.ad, player_attr.dot, gem_bd_selected)
+                * calculateMoreMultipliers(gem_ce_selected)
+                * calculateDamageTakenMultipliers(shock, curse_v)
+                * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
+                }}
+            </strong>
+        </tab-heading>
+    </tab>
+</tabset>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
-        <script src="./ui-bootstrap-0.11.0.min.js"></script>
-        <script>
-            angular.module('rfcalc', ['ui.bootstrap']).controller('MainCtrl', function($scope, $location){
-                $scope.singleModel = 1;
-                $scope.player_attr = {
-                    hp: 3895,
-                    es: 348,
-                    gic: 200,
-                    bd: 60,
-                    fd: 0,
-                    ad: 20,
-                    dot: 27
+
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
+<script src="./ui-bootstrap-0.11.0.min.js"></script>
+<script src="./ui-bootstrap-tpls-0.11.0.min.js"></script>
+<script>
+angular.module('rfcalc', ['ui.bootstrap']).controller(
+        'MainCtrl',
+        function ($scope, $location) {
+            $scope.singleModel = 1;
+            $scope.player_attr = {
+                hp: 3895,
+                es: 348,
+                gic: 200,
+                bd: 60,
+                fd: 0,
+                ed: 0,
+                ad: 20,
+                dot: 27
+            };
+
+            $scope.gem_ce = [
+                { level: 0, value: 0, text: 'not socketed' },
+                { level: 1, value: 50, text: 'Level 01 - 50% increased damage' },
+                { level: 2, value: 51, text: 'Level 02 - 51% increased damage' },
+                { level: 3, value: 52, text: 'Level 03 - 52% increased damage' },
+                { level: 4, value: 53, text: 'Level 04 - 53% increased damage' },
+                { level: 5, value: 54, text: 'Level 05 - 54% increased damage' },
+                { level: 6, value: 55, text: 'Level 06 - 55% increased damage' },
+                { level: 7, value: 56, text: 'Level 07 - 56% increased damage' },
+                { level: 8, value: 57, text: 'Level 08 - 57% increased damage' },
+                { level: 9, value: 58, text: 'Level 09 - 58% increased damage' },
+                { level: 10, value: 59, text: 'Level 10 - 59% increased damage' },
+                { level: 11, value: 60, text: 'Level 11 - 60% increased damage' },
+                { level: 12, value: 61, text: 'Level 12 - 61% increased damage' },
+                { level: 13, value: 62, text: 'Level 13 - 62% increased damage' },
+                { level: 14, value: 63, text: 'Level 14 - 63% increased damage' },
+                { level: 15, value: 64, text: 'Level 15 - 64% increased damage' },
+                { level: 16, value: 65, text: 'Level 16 - 65% increased damage' },
+                { level: 17, value: 66, text: 'Level 17 - 66% increased damage' },
+                { level: 18, value: 67, text: 'Level 18 - 67% increased damage' },
+                { level: 19, value: 68, text: 'Level 19 - 68% increased damage' },
+                { level: 20, value: 69, text: 'Level 20 - 69% increased damage' },
+                { level: 21, value: 70, text: 'Level 21 - 70% increased damage' },
+                { level: 22, value: 71, text: 'Level 22 - 71% increased damage' },
+                { level: 23, value: 72, text: 'Level 23 - 72% increased damage' },
+                { level: 24, value: 73, text: 'Level 24 - 73% increased damage' },
+                { level: 25, value: 74, text: 'Level 25 - 74% increased damage' },
+                { level: 26, value: 75, text: 'Level 26 - 75% increased damage' }
+            ];
+            $scope.gem_ce_selected = $scope.gem_ce[0].value;
+
+            $scope.gem_bd = [
+                { level: 0, value: 0, text: 'not socketed' },
+                { level: 1, value: 40, text: 'Level 01 - 40% increased damage' },
+                { level: 2, value: 41, text: 'Level 02 - 41% increased damage' },
+                { level: 3, value: 42, text: 'Level 03 - 42% increased damage' },
+                { level: 4, value: 43, text: 'Level 04 - 43% increased damage' },
+                { level: 5, value: 44, text: 'Level 05 - 44% increased damage' },
+                { level: 6, value: 45, text: 'Level 06 - 45% increased damage' },
+                { level: 7, value: 46, text: 'Level 07 - 46% increased damage' },
+                { level: 8, value: 47, text: 'Level 08 - 47% increased damage' },
+                { level: 9, value: 48, text: 'Level 09 - 48% increased damage' },
+                { level: 10, value: 49, text: 'Level 10 - 49% increased damage' },
+                { level: 11, value: 50, text: 'Level 11 - 50% increased damage' },
+                { level: 12, value: 51, text: 'Level 12 - 51% increased damage' },
+                { level: 13, value: 52, text: 'Level 13 - 52% increased damage' },
+                { level: 14, value: 53, text: 'Level 14 - 53% increased damage' },
+                { level: 15, value: 54, text: 'Level 15 - 54% increased damage' },
+                { level: 16, value: 55, text: 'Level 16 - 55% increased damage' },
+                { level: 17, value: 56, text: 'Level 17 - 56% increased damage' },
+                { level: 18, value: 57, text: 'Level 18 - 57% increased damage' },
+                { level: 19, value: 58, text: 'Level 19 - 58% increased damage' },
+                { level: 20, value: 59, text: 'Level 20 - 59% increased damage' },
+                { level: 21, value: 60, text: 'Level 21 - 60% increased damage' },
+                { level: 22, value: 61, text: 'Level 22 - 61% increased damage' },
+                { level: 23, value: 62, text: 'Level 23 - 62% increased damage' },
+                { level: 24, value: 63, text: 'Level 24 - 63% increased damage' },
+                { level: 25, value: 64, text: 'Level 25 - 64% increased damage' },
+                { level: 26, value: 65, text: 'Level 26 - 65% increased damage' }
+            ];
+            $scope.gem_bd_selected = $scope.gem_bd[0].value;
+
+            $scope.curse_f = [
+                { level: 0, value: 0, text: 'not used' },
+                { level: 1, value: 30, text: 'level 01 - 30% reduced fire resistance' },
+                { level: 2, value: 31, text: 'level 02 - 31% reduced fire resistance' },
+                { level: 3, value: 32, text: 'level 03 - 32% reduced fire resistance' },
+                { level: 4, value: 33, text: 'level 04 - 33% reduced fire resistance' },
+                { level: 5, value: 34, text: 'level 05 - 34% reduced fire resistance' },
+                { level: 6, value: 35, text: 'level 06 - 35% reduced fire resistance' },
+                { level: 7, value: 36, text: 'level 07 - 36% reduced fire resistance' },
+                { level: 8, value: 37, text: 'level 08 - 37% reduced fire resistance' },
+                { level: 9, value: 38, text: 'level 09 - 38% reduced fire resistance' },
+                { level: 10, value: 39, text: 'level 10 - 39% reduced fire resistance' },
+                { level: 11, value: 40, text: 'level 11 - 40% reduced fire resistance' },
+                { level: 12, value: 41, text: 'level 12 - 41% reduced fire resistance' },
+                { level: 13, value: 42, text: 'level 13 - 42% reduced fire resistance' },
+                { level: 14, value: 43, text: 'level 14 - 43% reduced fire resistance' },
+                { level: 15, value: 44, text: 'level 15 - 44% reduced fire resistance' },
+                { level: 16, value: 45, text: 'level 16 - 45% reduced fire resistance' },
+                { level: 17, value: 46, text: 'level 17 - 46% reduced fire resistance' },
+                { level: 18, value: 47, text: 'level 18 - 47% reduced fire resistance' },
+                { level: 19, value: 48, text: 'level 19 - 48% reduced fire resistance' },
+                { level: 20, value: 49, text: 'level 20 - 49% reduced fire resistance' },
+                { level: 21, value: 50, text: 'level 21 - 50% reduced fire resistance' },
+                { level: 22, value: 51, text: 'level 22 - 51% reduced fire resistance' },
+                { level: 23, value: 52, text: 'level 23 - 52% reduced fire resistance' },
+                { level: 24, value: 53, text: 'level 24 - 53% reduced fire resistance' },
+                { level: 25, value: 54, text: 'level 25 - 54% reduced fire resistance' },
+                { level: 26, value: 55, text: 'level 26 - 55% reduced fire resistance' },
+            ];
+            $scope.curse_f_selected = $scope.curse_f[0].value;
+
+            $scope.curse_ew = [
+                { level: 0, value: 0, text: 'not used' },
+                { level: 1, value: 30, text: 'level 01 - 30% reduced elemental resistance' },
+                { level: 2, value: 31, text: 'level 02 - 31% reduced elemental resistance' },
+                { level: 3, value: 32, text: 'level 03 - 32% reduced elemental resistance' },
+                { level: 4, value: 33, text: 'level 04 - 33% reduced elemental resistance' },
+                { level: 5, value: 34, text: 'level 05 - 34% reduced elemental resistance' },
+                { level: 6, value: 35, text: 'level 06 - 35% reduced elemental resistance' },
+                { level: 7, value: 36, text: 'level 07 - 36% reduced elemental resistance' },
+                { level: 8, value: 37, text: 'level 08 - 37% reduced elemental resistance' },
+                { level: 9, value: 38, text: 'level 09 - 38% reduced elemental resistance' },
+                { level: 10, value: 39, text: 'level 10 - 39% reduced elemental resistance' },
+                { level: 11, value: 40, text: 'level 11 - 40% reduced elemental resistance' },
+                { level: 12, value: 41, text: 'level 12 - 41% reduced elemental resistance' },
+                { level: 13, value: 42, text: 'level 13 - 42% reduced elemental resistance' },
+                { level: 14, value: 43, text: 'level 14 - 43% reduced elemental resistance' },
+                { level: 15, value: 44, text: 'level 15 - 44% reduced elemental resistance' },
+                { level: 16, value: 45, text: 'level 16 - 45% reduced elemental resistance' },
+                { level: 17, value: 46, text: 'level 17 - 46% reduced elemental resistance' },
+                { level: 18, value: 47, text: 'level 18 - 47% reduced elemental resistance' },
+                { level: 19, value: 48, text: 'level 19 - 48% reduced elemental resistance' },
+                { level: 20, value: 49, text: 'level 20 - 49% reduced elemental resistance' },
+                { level: 21, value: 50, text: 'level 21 - 50% reduced elemental resistance' },
+                { level: 22, value: 51, text: 'level 22 - 51% reduced elemental resistance' },
+                { level: 23, value: 52, text: 'level 23 - 52% reduced elemental resistance' },
+                { level: 24, value: 53, text: 'level 24 - 53% reduced elemental resistance' },
+                { level: 25, value: 54, text: 'level 25 - 54% reduced elemental resistance' },
+                { level: 26, value: 55, text: 'level 26 - 55% reduced elemental resistance' },
+            ];
+            $scope.curse_ew_selected = $scope.curse_ew[0].value;
+
+            $scope.curse_ew_quality = [
+                { level: 0, value: 0, text: '0% quality - 0% reduced elemental resistance' },
+                { level: 1, value: 0.5, text: '1% quality - 0.5% reduced elemental resistance' },
+                { level: 2, value: 1, text: '2% quality - 1% reduced elemental resistance' },
+                { level: 3, value: 1.5, text: '3% quality - 1.5% reduced elemental resistance' },
+                { level: 4, value: 2, text: '4% quality - 2% reduced elemental resistance' },
+                { level: 5, value: 2.5, text: '5% quality - 2.5% reduced elemental resistance' },
+                { level: 6, value: 3, text: '6% quality - 3% reduced elemental resistance' },
+                { level: 7, value: 3.5, text: '7% quality - 3.5% reduced elemental resistance' },
+                { level: 8, value: 4, text: '8% quality - 4% reduced elemental resistance' },
+                { level: 9, value: 4.5, text: '9% quality - 4.5% reduced elemental resistance' },
+                { level: 0, value: 5, text: '10% quality - 5% reduced elemental resistance' },
+                { level: 1, value: 5.5, text: '11% quality - 5.5% reduced elemental resistance' },
+                { level: 2, value: 6, text: '12% quality - 6% reduced elemental resistance' },
+                { level: 3, value: 6.5, text: '13% quality - 6.5% reduced elemental resistance' },
+                { level: 4, value: 7, text: '14% quality - 7% reduced elemental resistance' },
+                { level: 5, value: 7.5, text: '15% quality - 7.5% reduced elemental resistance' },
+                { level: 6, value: 8, text: '16% quality - 8% reduced elemental resistance' },
+                { level: 7, value: 8.5, text: '17% quality - 8.5% reduced elemental resistance' },
+                { level: 8, value: 9, text: '18% quality - 9% reduced elemental resistance' },
+                { level: 9, value: 9.5, text: '19% quality - 9.5% reduced elemental resistance' },
+                { level: 0, value: 10, text: '20% quality - 10% reduced elemental resistance' },
+                { level: 1, value: 10.5, text: '21% quality - 10.5% reduced elemental resistance' },
+                { level: 2, value: 11, text: '22% quality - 11% reduced elemental resistance' },
+                { level: 3, value: 11.5, text: '23% quality - 11.5% reduced elemental resistance' },
+                { level: 4, value: 12, text: '24% quality - 12% reduced elemental resistance' },
+                { level: 5, value: 12.5, text: '25% quality - 12.5% reduced elemental resistance' },
+            ];
+            $scope.curse_ew_quality_selected = $scope.curse_ew_quality[0].value;
+
+            $scope.curse_v = 0;
+            $scope.curse_v_value = 40;
+
+            $scope.curse_ee = 0;
+            $scope.curse_ee_value = 50;
+
+            $scope.shock = 0;
+            $scope.shock_value = 30;
+
+            $scope.resist_base = 75;
+
+            $scope.calculateBaseDamage = function (hp, es) {
+                hp = typeof hp !== 'undefined' ? hp : 0;
+                es = typeof es !== 'undefined' ? es : 0;
+
+                return (hp / 2) + (es / 2);
+            }
+
+            $scope.calculateAdditiveMultipliers = function (gic, bd, fd, ed, ad, dot, gem_bd) {
+                gic = typeof gic !== 'undefined' ? gic : 0;
+                bd = typeof bd !== 'undefined' ? bd : 0;
+                fd = typeof fd !== 'undefined' ? fd : 0;
+                ed = typeof ed !== 'undefined' ? ed : 0;
+                ad = typeof ad !== 'undefined' ? ad : 0;
+                dot = typeof dot !== 'undefined' ? dot : 0;
+                gem_bd = typeof gem_bd !== 'undefined' ? gem_bd : 0;
+
+                var multiplier = gic + bd + fd + ed + ad + dot + gem_bd;
+
+                return  1 + (multiplier / 100);
+            }
+
+            $scope.calculateMoreMultipliers = function (ce) {
+                ce = typeof ce !== 'undefined' ? ce : 0;
+
+                var multiplier = ce;
+
+                return 1 + ( multiplier / 100 );
+            }
+
+            $scope.calculateDamageTakenMultipliers = function (shock, vuln) {
+                shock = typeof shock !== 'undefined' ? shock : 0;
+                vuln = typeof vuln !== 'undefined' ? vuln : 0;
+
+                var multiplier = shock * $scope.shock_value + vuln * $scope.curse_v_value;
+
+                return 1 + ( multiplier / 100 );
+            }
+
+            $scope.calculateCurses = function(f, ew, ewq, ee) {
+                f = typeof f !== 'undefined' ? f : 0;
+                ew = typeof ew !== 'undefined' ? ew : 0;
+                ewq = typeof ewq !== 'undefined' ? ewq : 0;
+                ee = typeof ee !== 'undefined' ? ee : 0;
+
+                return f + ew + ewq + ee * $scope.curse_ee_value;
+            }
+
+            $scope.calculateResistedMultiplier = function(baseValue, curseValue) {
+                var finalResist = baseValue - curseValue;
+
+                if (finalResist > 0) {
+                    return 1 - ( finalResist / 100 );
+                }
+
+                if (finalResist < 0) {
+                    return 1 + ( ( finalResist * -1 ) / 100 );
+                }
+
+                return 1;
+            }
+
+            $scope.updateHash = function () {
+                var parameters = {
+                    hp: $scope.player_attr.hp,
+                    es: $scope.player_attr.es,
+                    gic: $scope.player_attr.gic,
+                    bd: $scope.player_attr.bd,
+                    fd: $scope.player_attr.fd,
+                    ed: $scope.player_attr.ed,
+                    ad: $scope.player_attr.ad,
+                    dot: $scope.player_attr.dot,
+                    gce: $scope.gem_ce_selected,
+                    gbd: $scope.gem_bd_selected,
+                    cf: $scope.curse_f_selected,
+                    cew: $scope.curse_ew_selected,
+                    cewq: $scope.curse_ew_quality_selected,
+                    cv: $scope.curse_v,
+                    cee: $scope.curse_ee,
+                    shock: $scope.shock,
+                    res: $scope.resist_base
                 };
+                $location.search(
+                        parameters
+                );
+            }
 
-                $scope.gem_ce = [
-                    { level: 0, value: 0, text: 'not socketed' },
-                    { level: 1, value: 50, text: 'Level 01 - 50% increased damage' },
-                    { level: 2, value: 51, text: 'Level 02 - 51% increased damage' },
-                    { level: 3, value: 52, text: 'Level 03 - 52% increased damage' },
-                    { level: 4, value: 53, text: 'Level 04 - 53% increased damage' },
-                    { level: 5, value: 54, text: 'Level 05 - 54% increased damage' },
-                    { level: 6, value: 55, text: 'Level 06 - 55% increased damage' },
-                    { level: 7, value: 56, text: 'Level 07 - 56% increased damage' },
-                    { level: 8, value: 57, text: 'Level 08 - 57% increased damage' },
-                    { level: 9, value: 58, text: 'Level 09 - 58% increased damage' },
-                    { level: 10, value: 59, text: 'Level 10 - 59% increased damage' },
-                    { level: 11, value: 60, text: 'Level 11 - 60% increased damage' },
-                    { level: 12, value: 61, text: 'Level 12 - 61% increased damage' },
-                    { level: 13, value: 62, text: 'Level 13 - 62% increased damage' },
-                    { level: 14, value: 63, text: 'Level 14 - 63% increased damage' },
-                    { level: 15, value: 64, text: 'Level 15 - 64% increased damage' },
-                    { level: 16, value: 65, text: 'Level 16 - 65% increased damage' },
-                    { level: 17, value: 66, text: 'Level 17 - 66% increased damage' },
-                    { level: 18, value: 67, text: 'Level 18 - 67% increased damage' },
-                    { level: 19, value: 68, text: 'Level 19 - 68% increased damage' },
-                    { level: 20, value: 69, text: 'Level 20 - 69% increased damage' },
-                    { level: 21, value: 70, text: 'Level 21 - 70% increased damage' },
-                    { level: 22, value: 71, text: 'Level 22 - 71% increased damage' },
-                    { level: 23, value: 72, text: 'Level 23 - 72% increased damage' },
-                    { level: 24, value: 73, text: 'Level 24 - 73% increased damage' },
-                    { level: 25, value: 74, text: 'Level 25 - 74% increased damage' },
-                    { level: 26, value: 75, text: 'Level 26 - 75% increased damage' }
-                ];
-                $scope.gem_ce_selected = $scope.gem_ce[0].value;
+            $scope.updateScopeData = function () {
+                var locSearch = $location.search(
+                );
 
-                $scope.gem_bd = [
-                    { level: 0, value: 0, text: 'not socketed' },
-                    { level: 1, value: 40, text: 'Level 01 - 40% increased damage' },
-                    { level: 2, value: 41, text: 'Level 02 - 41% increased damage' },
-                    { level: 3, value: 42, text: 'Level 03 - 42% increased damage' },
-                    { level: 4, value: 43, text: 'Level 04 - 43% increased damage' },
-                    { level: 5, value: 44, text: 'Level 05 - 44% increased damage' },
-                    { level: 6, value: 45, text: 'Level 06 - 45% increased damage' },
-                    { level: 7, value: 46, text: 'Level 07 - 46% increased damage' },
-                    { level: 8, value: 47, text: 'Level 08 - 47% increased damage' },
-                    { level: 9, value: 48, text: 'Level 09 - 48% increased damage' },
-                    { level: 10, value: 49, text: 'Level 10 - 49% increased damage' },
-                    { level: 11, value: 50, text: 'Level 11 - 50% increased damage' },
-                    { level: 12, value: 51, text: 'Level 12 - 51% increased damage' },
-                    { level: 13, value: 52, text: 'Level 13 - 52% increased damage' },
-                    { level: 14, value: 53, text: 'Level 14 - 53% increased damage' },
-                    { level: 15, value: 54, text: 'Level 15 - 54% increased damage' },
-                    { level: 16, value: 55, text: 'Level 16 - 55% increased damage' },
-                    { level: 17, value: 56, text: 'Level 17 - 56% increased damage' },
-                    { level: 18, value: 57, text: 'Level 18 - 57% increased damage' },
-                    { level: 19, value: 58, text: 'Level 19 - 58% increased damage' },
-                    { level: 20, value: 59, text: 'Level 20 - 59% increased damage' },
-                    { level: 21, value: 60, text: 'Level 21 - 60% increased damage' },
-                    { level: 22, value: 61, text: 'Level 22 - 61% increased damage' },
-                    { level: 23, value: 62, text: 'Level 23 - 62% increased damage' },
-                    { level: 24, value: 63, text: 'Level 24 - 63% increased damage' },
-                    { level: 25, value: 64, text: 'Level 25 - 64% increased damage' },
-                    { level: 26, value: 65, text: 'Level 26 - 65% increased damage' }
-                ];
-                $scope.gem_bd_selected = $scope.gem_bd[0].value;
-
-                $scope.curse_f = [
-                    { level: 0,  value: 0, text: 'not used' },
-                    { level: 1,  value: 30, text: 'level 01 - 30% reduced fire resistance' },
-                    { level: 2,  value: 31, text: 'level 02 - 31% reduced fire resistance' },
-                    { level: 3,  value: 32, text: 'level 03 - 32% reduced fire resistance' },
-                    { level: 4,  value: 33, text: 'level 04 - 33% reduced fire resistance' },
-                    { level: 5,  value: 34, text: 'level 05 - 34% reduced fire resistance' },
-                    { level: 6,  value: 35, text: 'level 06 - 35% reduced fire resistance' },
-                    { level: 7,  value: 36, text: 'level 07 - 36% reduced fire resistance' },
-                    { level: 8,  value: 37, text: 'level 08 - 37% reduced fire resistance' },
-                    { level: 9,  value: 38, text: 'level 09 - 38% reduced fire resistance' },
-                    { level: 10, value: 39, text: 'level 10 - 39% reduced fire resistance' },
-                    { level: 11, value: 40, text: 'level 11 - 40% reduced fire resistance' },
-                    { level: 12, value: 41, text: 'level 12 - 41% reduced fire resistance' },
-                    { level: 13, value: 42, text: 'level 13 - 42% reduced fire resistance' },
-                    { level: 14, value: 43, text: 'level 14 - 43% reduced fire resistance' },
-                    { level: 15, value: 44, text: 'level 15 - 44% reduced fire resistance' },
-                    { level: 16, value: 45, text: 'level 16 - 45% reduced fire resistance' },
-                    { level: 17, value: 46, text: 'level 17 - 46% reduced fire resistance' },
-                    { level: 18, value: 47, text: 'level 18 - 47% reduced fire resistance' },
-                    { level: 19, value: 48, text: 'level 19 - 48% reduced fire resistance' },
-                    { level: 20, value: 49, text: 'level 20 - 49% reduced fire resistance' },
-                    { level: 21, value: 50, text: 'level 21 - 50% reduced fire resistance' },
-                    { level: 22, value: 51, text: 'level 22 - 51% reduced fire resistance' },
-                    { level: 23, value: 52, text: 'level 23 - 52% reduced fire resistance' },
-                    { level: 24, value: 53, text: 'level 24 - 53% reduced fire resistance' },
-                    { level: 25, value: 54, text: 'level 25 - 54% reduced fire resistance' },
-                    { level: 26, value: 55, text: 'level 26 - 55% reduced fire resistance' },
-                ];
-                $scope.curse_f_selected = $scope.curse_f[0].value;
-
-                $scope.curse_ew = [
-                    { level: 0,  value: 0, text: 'not used' },
-                    { level: 1,  value: 30, text: 'level 01 - 30% reduced elemental resistance' },
-                    { level: 2,  value: 31, text: 'level 02 - 31% reduced elemental resistance' },
-                    { level: 3,  value: 32, text: 'level 03 - 32% reduced elemental resistance' },
-                    { level: 4,  value: 33, text: 'level 04 - 33% reduced elemental resistance' },
-                    { level: 5,  value: 34, text: 'level 05 - 34% reduced elemental resistance' },
-                    { level: 6,  value: 35, text: 'level 06 - 35% reduced elemental resistance' },
-                    { level: 7,  value: 36, text: 'level 07 - 36% reduced elemental resistance' },
-                    { level: 8,  value: 37, text: 'level 08 - 37% reduced elemental resistance' },
-                    { level: 9,  value: 38, text: 'level 09 - 38% reduced elemental resistance' },
-                    { level: 10, value: 39, text: 'level 10 - 39% reduced elemental resistance' },
-                    { level: 11, value: 40, text: 'level 11 - 40% reduced elemental resistance' },
-                    { level: 12, value: 41, text: 'level 12 - 41% reduced elemental resistance' },
-                    { level: 13, value: 42, text: 'level 13 - 42% reduced elemental resistance' },
-                    { level: 14, value: 43, text: 'level 14 - 43% reduced elemental resistance' },
-                    { level: 15, value: 44, text: 'level 15 - 44% reduced elemental resistance' },
-                    { level: 16, value: 45, text: 'level 16 - 45% reduced elemental resistance' },
-                    { level: 17, value: 46, text: 'level 17 - 46% reduced elemental resistance' },
-                    { level: 18, value: 47, text: 'level 18 - 47% reduced elemental resistance' },
-                    { level: 19, value: 48, text: 'level 19 - 48% reduced elemental resistance' },
-                    { level: 20, value: 49, text: 'level 20 - 49% reduced elemental resistance' },
-                    { level: 21, value: 50, text: 'level 21 - 50% reduced elemental resistance' },
-                    { level: 22, value: 51, text: 'level 22 - 51% reduced elemental resistance' },
-                    { level: 23, value: 52, text: 'level 23 - 52% reduced elemental resistance' },
-                    { level: 24, value: 53, text: 'level 24 - 53% reduced elemental resistance' },
-                    { level: 25, value: 54, text: 'level 25 - 54% reduced elemental resistance' },
-                    { level: 26, value: 55, text: 'level 26 - 55% reduced elemental resistance' },
-                ];
-                $scope.curse_ew_selected = $scope.curse_ew[0].value;
-
-                $scope.curse_ew_quality = [
-                    { level: 0, value: 0, text: '0% quality - 0% reduced elemental resistance' },
-                    { level: 1, value: 0.5, text: '1% quality - 0.5% reduced elemental resistance' },
-                    { level: 2, value: 1, text: '2% quality - 1% reduced elemental resistance' },
-                    { level: 3, value: 1.5, text: '3% quality - 1.5% reduced elemental resistance' },
-                    { level: 4, value: 2, text: '4% quality - 2% reduced elemental resistance' },
-                    { level: 5, value: 2.5, text: '5% quality - 2.5% reduced elemental resistance' },
-                    { level: 6, value: 3, text: '6% quality - 3% reduced elemental resistance' },
-                    { level: 7, value: 3.5, text: '7% quality - 3.5% reduced elemental resistance' },
-                    { level: 8, value: 4, text: '8% quality - 4% reduced elemental resistance' },
-                    { level: 9, value: 4.5, text: '9% quality - 4.5% reduced elemental resistance' },
-                    { level: 0, value: 5, text: '10% quality - 5% reduced elemental resistance' },
-                    { level: 1, value: 5.5, text: '11% quality - 5.5% reduced elemental resistance' },
-                    { level: 2, value: 6, text: '12% quality - 6% reduced elemental resistance' },
-                    { level: 3, value: 6.5, text: '13% quality - 6.5% reduced elemental resistance' },
-                    { level: 4, value: 7, text: '14% quality - 7% reduced elemental resistance' },
-                    { level: 5, value: 7.5, text: '15% quality - 7.5% reduced elemental resistance' },
-                    { level: 6, value: 8, text: '16% quality - 8% reduced elemental resistance' },
-                    { level: 7, value: 8.5, text: '17% quality - 8.5% reduced elemental resistance' },
-                    { level: 8, value: 9, text: '18% quality - 9% reduced elemental resistance' },
-                    { level: 9, value: 9.5, text: '19% quality - 9.5% reduced elemental resistance' },
-                    { level: 0, value: 10, text: '20% quality - 10% reduced elemental resistance' },
-                    { level: 1, value: 10.5, text: '21% quality - 10.5% reduced elemental resistance' },
-                    { level: 2, value: 11, text: '22% quality - 11% reduced elemental resistance' },
-                    { level: 3, value: 11.5, text: '23% quality - 11.5% reduced elemental resistance' },
-                    { level: 4, value: 12, text: '24% quality - 12% reduced elemental resistance' },
-                    { level: 5, value: 12.5, text: '25% quality - 12.5% reduced elemental resistance' },
-                ];
-                $scope.curse_ew_quality_selected = $scope.curse_ew_quality[0].value;
-
-                $scope.curse_v = 0;
-                $scope.curse_v_value = 40;
-
-                $scope.curse_ee = 0;
-                $scope.curse_ee_value = 50;
-
-                $scope.shock = 0;
-                $scope.shock_value = 30;
-
-                $scope.updateHash = function() {
-                    var parameters = {
-                        hp: $scope.player_attr.hp,
-                        es: $scope.player_attr.es,
-                        gic: $scope.player_attr.gic,
-                        bd: $scope.player_attr.bd,
-                        fd: $scope.player_attr.fd,
-                        ad: $scope.player_attr.ad,
-                        dot: $scope.player_attr.dot,
-                        gce: $scope.gem_ce_selected,
-                        gbd: $scope.gem_bd_selected,
-                        cf: $scope.curse_f_selected,
-                        cew: $scope.curse_ew_selected,
-                        cewq: $scope.curse_ew_quality_selected,
-                        cv: $scope.curse_v,
-                        cee: $scope.curse_ee,
-                        shock: $scope.shock
-                    };
-                    $location.search(parameters);
+                if (locSearch.hp) {
+                    $scope.player_attr.hp = parseInt(
+                            locSearch.hp
+                    );
                 }
 
-                $scope.updateScopeData = function() {
-                    var locSearch = $location.search();
-                    console.log(locSearch);
-
-                    if (locSearch.hp) {
-                        $scope.player_attr.hp = parseInt(locSearch.hp);
-                    }
-
-                    if (locSearch.es) {
-                        $scope.player_attr.es = parseInt(locSearch.es);
-                    }
-
-                    if (locSearch.gic) {
-                        $scope.player_attr.gic = parseInt(locSearch.gic);
-                    }
-
-                    if (locSearch.bd) {
-                        $scope.player_attr.bd = parseInt(locSearch.bd);
-                    }
-
-                    if (locSearch.fd) {
-                        $scope.player_attr.fd = parseInt(locSearch.fd);
-                    }
-
-                    if (locSearch.ad) {
-                        $scope.player_attr.ad = parseInt(locSearch.ad);
-                    }
-
-                    if (locSearch.dot) {
-                        $scope.player_attr.dot = parseInt(locSearch.dot);
-                    }
-
-                    if (locSearch.gce) {
-                        $scope.gem_ce_selected = parseInt(locSearch.gce);
-                    }
-
-                    if (locSearch.gbd) {
-                        $scope.gem_bd_selected = parseInt(locSearch.gbd);
-                    }
-
-                    if (locSearch.cf) {
-                        $scope.curse_f_selected = parseInt(locSearch.cf);
-                    }
-
-                    if (locSearch.cew) {
-                        $scope.curse_ew_selected = parseInt(locSearch.cew);
-                    }
-
-                    if (locSearch.cewq) {
-                        $scope.curse_ew_quality_selected = parseInt(locSearch.cewq);
-                    }
-
-                    if (locSearch.cv) {
-                        $scope.curse_v = parseInt(locSearch.cv);
-                    }
-
-                    if (locSearch.cee) {
-                        $scope.curse_ee = parseInt(locSearch.cee);
-                    }
-
-                    if (locSearch.shock) {
-                        $scope.shock = parseInt(locSearch.shock);
-                    }
+                if (locSearch.es) {
+                    $scope.player_attr.es = parseInt(
+                            locSearch.es
+                    );
                 }
 
-                $scope.updateScopeData();
+                if (locSearch.gic) {
+                    $scope.player_attr.gic = parseInt(
+                            locSearch.gic
+                    );
+                }
 
-            });
-        </script>
-    </body>
+                if (locSearch.bd) {
+                    $scope.player_attr.bd = parseInt(
+                            locSearch.bd
+                    );
+                }
+
+                if (locSearch.fd) {
+                    $scope.player_attr.fd = parseInt(
+                            locSearch.fd
+                    );
+                }
+
+                if (locSearch.ed) {
+                    $scope.player_attr.ed = parseInt(
+                            locSearch.ed
+                    );
+                }
+
+                if (locSearch.ad) {
+                    $scope.player_attr.ad = parseInt(
+                            locSearch.ad
+                    );
+                }
+
+                if (locSearch.dot) {
+                    $scope.player_attr.dot = parseInt(
+                            locSearch.dot
+                    );
+                }
+
+                if (locSearch.gce) {
+                    $scope.gem_ce_selected = parseInt(
+                            locSearch.gce
+                    );
+                }
+
+                if (locSearch.gbd) {
+                    $scope.gem_bd_selected = parseInt(
+                            locSearch.gbd
+                    );
+                }
+
+                if (locSearch.cf) {
+                    $scope.curse_f_selected = parseInt(
+                            locSearch.cf
+                    );
+                }
+
+                if (locSearch.cew) {
+                    $scope.curse_ew_selected = parseInt(
+                            locSearch.cew
+                    );
+                }
+
+                if (locSearch.cewq) {
+                    $scope.curse_ew_quality_selected = parseInt(
+                            locSearch.cewq
+                    );
+                }
+
+                if (locSearch.cv) {
+                    $scope.curse_v = parseInt(
+                            locSearch.cv
+                    );
+                }
+
+                if (locSearch.cee) {
+                    $scope.curse_ee = parseInt(
+                            locSearch.cee
+                    );
+                }
+
+                if (locSearch.shock) {
+                    $scope.shock = parseInt(
+                            locSearch.shock
+                    );
+                }
+
+                if (locSearch.res) {
+                    $scope.resist_base = parseInt(
+                            locSearch.res
+                    );
+                }
+            }
+            $scope.updateScopeData();
+
+        }
+);
+</script>
+</body>
 </html>
