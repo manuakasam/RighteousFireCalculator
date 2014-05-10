@@ -1,7 +1,7 @@
 <html ng-app="rfcalc">
     <head>
         <meta charset="utf8" />
-        <title>AngularJS Tutorial</title>
+        <title>Righteous Fire Calculator</title>
         <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     </head>
     <body>
@@ -17,7 +17,7 @@
                 <tr>
                     <th scope="row">Player HP</th>
                     <td>
-                        <input type="text" value="1000" ng-model="player_attr.hp" class="form-control">
+                        <input type="number" value="1000" ng-model="player_attr.hp" ng-change="updateHash()" class="form-control">
                     </td>
                     <td>
                         {{
@@ -28,14 +28,12 @@
                 <tr>
                     <th scope="row">Player Energy Shield</th>
                     <td>
-                        <input type="text" value="0" ng-model="player_attr.es" class="form-control">
+                        <input type="number" value="0" ng-model="player_attr.es" ng-change="updateHash()" class="form-control">
                     </td>
                     <td>
                         {{
-                            (
-                                player_attr.hp / 2
-                              + player_attr.es / 2
-                            )
+                            ( player_attr.hp / 2 )
+                          + ( player_attr.es / 2 )
                         }}
                     </td>
                 </tr>
@@ -43,261 +41,358 @@
                     <th scope="row">Global Damage Increase</th>
                     <td>
                         <div class="input-group">
-                            <input type="text" value="0" ng-model="player_attr.gic" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.gic" ng-change="updateHash()" class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                          * ( 1 + ( player_attr.gic / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Burn Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="text" value="0" ng-model="player_attr.bd" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.bd" ng-change="updateHash()" class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                        (
-                        ( player_attr.hp / 2 )
-                        + ( player_attr.es / 2 )
-                        )
-                        * ( 1 + ( player_attr.gic / 100 ) )
-                        * ( 1 + ( player_attr.bd  / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Fire Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="text" value="0" ng-model="player_attr.fd" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.fd" ng-change="updateHash()" class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Area Damage</th>
                     <td>
                         <div class="input-group">
-                            <input type="text" value="0" ng-model="player_attr.ad" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.ad" ng-change="updateHash()" class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Global Damage Over Time</th>
                     <td>
                         <div class="input-group">
-                            <input type="text" value="0" ng-model="player_attr.dot" class="form-control">
+                            <input type="number" value="0" ng-model="player_attr.dot" ng-change="updateHash()" class="form-control">
                             <span class="input-group-addon">%</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                        (
-                        ( player_attr.hp / 2 )
-                        + ( player_attr.es / 2 )
-                        )
-                        * ( 1 + ( player_attr.gic / 100 ) )
-                        * ( 1 + ( player_attr.bd  / 100 ) )
-                        * ( 1 + ( player_attr.fd  / 100 ) )
-                        * ( 1 + ( player_attr.ad  / 100 ) )
-                        * ( 1 + ( player_attr.dot / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Gem Concentrated Effect</th>
                     <td>
-                        <select ng-model="gem_ce_selected" ng-options="ce.value as ce.text for ce in gem_ce" class="form-control">
+                        <select ng-model="gem_ce_selected" ng-options="ce.value as ce.text for ce in gem_ce" ng-change="updateHash()" class="form-control">
                         </select>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+        ) / 100
+    ) )
+    * ( 1 + ( gem_ce_selected / 100 ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Gem Increased Burning Damage</th>
                     <td>
-                        <select ng-model="gem_bd_selected" ng-options="bd.value as bd.text for bd in gem_bd" class="form-control">
+                        <select ng-model="gem_bd_selected" ng-options="bd.value as bd.text for bd in gem_bd" ng-change="updateHash()" class="form-control">
                         </select>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                            * ( 1 + ( gem_bd_selected / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+          + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + (
+        gem_ce_selected / 100
+    ) )
+}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <strong>Disclaimer</strong>: Curses here are Damage Multiplicators. For the theoretic model this
+                        perfectly fine but in game it doesn't really increase your damage but rather increases the
+                        damage the enemy receives, which would otherwise be mitigated by their resistances.
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Curse Flamability</th>
                     <td>
-                        <select ng-model="curse_f_selected" ng-options="f.value as f.text for f in curse_f" class="form-control">
+                        <select ng-model="curse_f_selected" ng-options="f.value as f.text for f in curse_f" ng-change="updateHash()" class="form-control">
                         </select>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                            * ( 1 + ( gem_bd_selected / 100 ) )
-                            * ( 1 + ( curse_f_selected / 100 ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+          + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + ( gem_ce_selected / 100 ) )
+    * ( 1 + (
+        (
+            curse_f_selected
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Curse Elemental Weakness</th>
                     <td>
-                        <select ng-model="curse_ew_selected" ng-options="ew.value as ew.text for ew in curse_ew" class="form-control">
+                        <select ng-model="curse_ew_selected" ng-options="ew.value as ew.text for ew in curse_ew" ng-change="updateHash()" class="form-control">
+                        </select>
+                        <br />
+                        <select ng-model="curse_ew_quality_selected" ng-options="ewq.value as ewq.text for ewq in curse_ew_quality" ng-change="updateHash()" class="form-control">
                         </select>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                            * ( 1 + ( gem_bd_selected / 100 ) )
-                            * ( 1 + (
-                                (
-                                    curse_f_selected
-                                  + curse_ew_selected
-                                ) / 100
-                            ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+          + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + ( gem_ce_selected / 100 ) )
+    * ( 1 + (
+        (
+            curse_f_selected
+          + curse_ew_selected
+        ) / 100
+    ) )
+}}
+                        <br />
+                        <br />
+                        <br />
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+          + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + ( gem_ce_selected / 100 ) )
+    * ( 1 + (
+        (
+            curse_f_selected
+          + curse_ew_selected
+          + curse_ew_quality_selected
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Curse Vulnerability</th>
                     <td>
                         <div class="input-group">
-                            <button type="button" class="btn btn-primary" ng-model="curse_v" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+                            <button type="button" class="btn btn-primary" ng-model="curse_v" ng-change="updateHash()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
                                 Toggle
                             </button>
                             <span class="input-group-addon">{{curse_v * curse_v_value}}% damage increase</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                            * ( 1 + ( gem_bd_selected / 100 ) )
-                            * ( 1 + (
-                                (
-                                    curse_f_selected
-                                  + curse_ew_selected
-                                  + ( curse_v * curse_v_value )
-                                ) / 100
-                            ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+        + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+            + player_attr.bd
+            + player_attr.fd
+            + player_attr.ad
+            + player_attr.dot
+            + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + (
+        (
+            gem_ce_selected
+          + ( curse_v * curse_v_value )
+        ) / 100
+    ) )
+    * ( 1 + (
+        (
+            curse_f_selected
+            + curse_ew_selected
+            + curse_ew_quality_selected
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">Elemental Equilibrium</th>
                     <td>
                         <div class="input-group">
-                            <button type="button" class="btn btn-primary" ng-model="curse_ee" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+                            <button type="button" class="btn btn-primary" ng-model="curse_ee" ng-change="updateHash()" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
                                 Toggle
                             </button>
                             <span class="input-group-addon">{{curse_ee * curse_ee_value}}% reduced fire resistance</span>
                         </div>
                     </td>
                     <td>
-                        {{
-                            (
-                                ( player_attr.hp / 2 )
-                              + ( player_attr.es / 2 )
-                            )
-                            * ( 1 + ( player_attr.gic / 100 ) )
-                            * ( 1 + ( player_attr.bd  / 100 ) )
-                            * ( 1 + ( player_attr.fd  / 100 ) )
-                            * ( 1 + ( player_attr.ad  / 100 ) )
-                            * ( 1 + ( player_attr.dot / 100 ) )
-                            * ( 1 + ( gem_ce_selected / 100 ) )
-                            * ( 1 + ( gem_bd_selected / 100 ) )
-                            * ( 1 + (
-                                (
-                                    curse_f_selected
-                                  + curse_ew_selected
-                                  + ( curse_v * curse_v_value )
-                                  + ( curse_ee * curse_ee_value )
-                                ) / 100
-                            ) )
-                        }}
+{{
+    (
+        ( player_attr.hp / 2 )
+      + ( player_attr.es / 2 )
+    )
+    * ( 1 + (
+        (
+            player_attr.gic
+          + player_attr.bd
+          + player_attr.fd
+          + player_attr.ad
+          + player_attr.dot
+          + gem_bd_selected
+        ) / 100
+    ) )
+    * ( 1 + (
+        (
+            gem_ce_selected
+          + ( curse_v * curse_v_value )
+        ) / 100
+    ) )
+    * ( 1 + (
+        (
+            curse_f_selected
+          + curse_ew_selected
+          + curse_ew_quality_selected
+          + ( curse_ee * curse_ee_value )
+        ) / 100
+    ) )
+}}
                     </td>
                 </tr>
             </tbody>
@@ -306,17 +401,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.js"></script>
         <script src="./ui-bootstrap-0.11.0.min.js"></script>
         <script>
-            angular.module('rfcalc', ['ui.bootstrap']).controller('MainCtrl', function($scope){
-
+            angular.module('rfcalc', ['ui.bootstrap']).controller('MainCtrl', function($scope, $location){
                 $scope.singleModel = 1;
                 $scope.player_attr = {
-                    hp: 3895,   // Hitpoints
-                    es: 348,    // Energy Shield
-                    gic: 200,   // Global Damage Increase Percent
-                    bd: 60,     // Global Burn Damage Increase Percent
-                    fd: 0,      // Global Fire Damage Increase Percent
-                    ad: 20,     // Global Area Damage Increase Percent
-                    dot: 27     // Global Damage Over Time Increase Percent
+                    hp: 3895,
+                    es: 348,
+                    gic: 200,
+                    bd: 60,
+                    fd: 0,
+                    ad: 20,
+                    dot: 27
                 };
 
                 $scope.gem_ce = [
@@ -478,6 +572,90 @@
 
                 $scope.curse_ee = 0;
                 $scope.curse_ee_value = 50;
+
+                $scope.updateHash = function() {
+                    var parameters = {
+                        hp: $scope.player_attr.hp,
+                        es: $scope.player_attr.es,
+                        gic: $scope.player_attr.gic,
+                        bd: $scope.player_attr.bd,
+                        fd: $scope.player_attr.fd,
+                        ad: $scope.player_attr.ad,
+                        dot: $scope.player_attr.dot,
+                        gce: $scope.gem_ce_selected,
+                        gbd: $scope.gem_bd_selected,
+                        cf: $scope.curse_f_selected,
+                        cew: $scope.curse_ew_selected,
+                        cewq: $scope.curse_ew_quality_selected,
+                        cv: $scope.curse_v,
+                        cee: $scope.curse_ee
+                    };
+                    $location.search(parameters);
+                }
+
+                $scope.updateScopeData = function() {
+                    var locSearch = $location.search();
+                    console.log(locSearch);
+
+                    if (locSearch.hp) {
+                        $scope.player_attr.hp = parseInt(locSearch.hp);
+                    }
+
+                    if (locSearch.es) {
+                        $scope.player_attr.es = parseInt(locSearch.es);
+                    }
+
+                    if (locSearch.gic) {
+                        $scope.player_attr.gic = parseInt(locSearch.gic);
+                    }
+
+                    if (locSearch.bd) {
+                        $scope.player_attr.bd = parseInt(locSearch.bd);
+                    }
+
+                    if (locSearch.fd) {
+                        $scope.player_attr.fd = parseInt(locSearch.fd);
+                    }
+
+                    if (locSearch.ad) {
+                        $scope.player_attr.ad = parseInt(locSearch.ad);
+                    }
+
+                    if (locSearch.dot) {
+                        $scope.player_attr.dot = parseInt(locSearch.dot);
+                    }
+
+                    if (locSearch.gce) {
+                        $scope.gem_ce_selected = parseInt(locSearch.gce);
+                    }
+
+                    if (locSearch.gbd) {
+                        $scope.gem_bd_selected = parseInt(locSearch.gbd);
+                    }
+
+                    if (locSearch.cf) {
+                        $scope.curse_f_selected = parseInt(locSearch.cf);
+                    }
+
+                    if (locSearch.cew) {
+                        $scope.curse_ew_selected = parseInt(locSearch.cew);
+                    }
+
+                    if (locSearch.cewq) {
+                        $scope.curse_ew_quality_selected = parseInt(locSearch.cewq);
+                    }
+
+                    if (locSearch.cv) {
+                        $scope.curse_v = parseInt(locSearch.cv);
+                    }
+
+                    if (locSearch.cee) {
+                        $scope.curse_ee = parseInt(locSearch.cee);
+                    }
+                }
+
+                $scope.updateScopeData();
+
             });
         </script>
     </body>
