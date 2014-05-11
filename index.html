@@ -27,6 +27,7 @@
                         <td>
                             {{
                             calculateBaseDamage(player_attr.hp)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -40,6 +41,7 @@
                         <td>
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -57,6 +59,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -73,6 +76,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -89,6 +93,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -105,6 +110,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -121,6 +127,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -137,6 +144,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -153,6 +161,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -174,6 +183,7 @@
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot)
                             * calculateMoreMultipliers(gem_rf_selected)
+                            | number : decimal_places
                             }}
                             <br />
                             <br />
@@ -182,6 +192,7 @@
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot)
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -198,6 +209,7 @@
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -214,6 +226,7 @@
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -245,6 +258,7 @@
                         * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
                         * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                         * calculateDamageTakenMultipliers(shock)
+                        | number : decimal_places
                         }}
                     </td>
                 </tr>
@@ -265,6 +279,7 @@
                         * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
                         * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                         * calculateDamageTakenMultipliers(shock, curse_v)
+                        | number : decimal_places
                         }}
                     </td>
                 </tr>
@@ -284,11 +299,13 @@
                     <tr>
                         <th scope="row">Set Base Resistance</th>
                         <td>
-                            <div class="btn-group">
-                                <label class="btn btn-default" ng-model="resist_base" ng-change="updateHash()" btn-radio="0">0%</label>
-                                <label class="btn btn-success" ng-model="resist_base" ng-change="updateHash()" btn-radio="25">25%</label>
-                                <label class="btn btn-warning" ng-model="resist_base" ng-change="updateHash()" btn-radio="50">50%</label>
-                                <label class="btn btn-danger" ng-model="resist_base" ng-change="updateHash()" btn-radio="75">75%</label>
+                            <div class="input-group">
+                                <div class="btn-group-justified">
+                                    <label class="btn btn-default" ng-model="resist_base" ng-change="updateHash()" btn-radio="0">0%</label>
+                                    <label class="btn btn-success" ng-model="resist_base" ng-change="updateHash()" btn-radio="25">25%</label>
+                                    <label class="btn btn-warning" ng-model="resist_base" ng-change="updateHash()" btn-radio="50">50%</label>
+                                    <label class="btn btn-danger" ng-model="resist_base" ng-change="updateHash()" btn-radio="75">75%</label>
+                                </div>
                                 <span class="input-group-addon">{{ resist_base }}% reduction</span>
                             </div>
                         </td>
@@ -299,6 +316,7 @@
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses())
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -329,6 +347,7 @@
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected))
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -350,6 +369,7 @@
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected))
+                            | number : decimal_places
                             }}
                             <br/>
                             <br/>
@@ -360,6 +380,7 @@
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected))
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -381,6 +402,7 @@
                             * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
+                            | number : decimal_places
                             }}
                         </td>
                     </tr>
@@ -396,6 +418,7 @@
                     * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
                     * calculateDamageTakenMultipliers(shock, curse_v)
                     * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
+                    | number : decimal_places
                     }}
                 </strong>
             </tab-heading>
@@ -409,6 +432,15 @@
             <span class="input-group-addon" ng-click="copyToClipboardPrompt(full_url)" style="cursor: pointer;">Copy to Clipboard</span>
         </div>
     </blockquote>
+    <hr />
+    <blockquote class="bg-info">
+        <p>Settings</p>
+        <div class="input-group">
+            <span class="input-group-addon">How many decimal places do you need?</span>
+            <input type="number" ng-model="decimal_places" class="form-control" min="0" max="15">
+            <span class="input-group-addon">decimal places shown</span>
+        </div>
+    </blockquote>
 </div>
 
 
@@ -419,6 +451,8 @@
 angular.module('rfcalc', ['ui.bootstrap']).controller(
         'MainCtrl',
         function ($scope, $location) {
+            $scope.decimal_places = 0;
+
             $scope.singleModel = 1;
             $scope.player_attr = {
                 hp: 3895,
