@@ -166,37 +166,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row">Gem Righteous Fire</th>
-                        <td>
-                            <select ng-model="gem_rf_selected" ng-options="rf.value as rf.text for rf in gem_rf"
-                                    ng-change="updateHash()"
-                                    class="form-control">
-                            </select>
-                            <br/>
-                            <select ng-model="gem_rf_quality_selected" ng-options="rfq.value as rfq.text for rfq in gem_rf_quality"
-                                    ng-change="updateHash()"
-                                    class="form-control">
-                            </select>
-                        </td>
-                        <td>
-                            {{
-                            calculateBaseDamage(player_attr.hp, player_attr.es)
-                            * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot)
-                            * calculateMoreMultipliers(gem_rf_selected)
-                            | number : decimal_places
-                            }}
-                            <br />
-                            <br />
-                            <br />
-                            {{
-                            calculateBaseDamage(player_attr.hp, player_attr.es)
-                            * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected)
-                            | number : decimal_places
-                            }}
-                        </td>
-                    </tr>
-                    <tr>
                         <th scope="row">Gem Increased Burning Damage</th>
                         <td>
                             <select ng-model="gem_bd_selected" ng-options="bd.value as bd.text for bd in gem_bd"
@@ -208,7 +177,6 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected)
                             | number : decimal_places
                             }}
                         </td>
@@ -225,7 +193,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             | number : decimal_places
                             }}
                         </td>
@@ -256,7 +224,7 @@
                         {{
                         calculateBaseDamage(player_attr.hp, player_attr.es)
                         * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                        * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
                         * calculateDamageTakenMultipliers(shock)
                         | number : decimal_places
                         }}
@@ -277,7 +245,7 @@
                         {{
                         calculateBaseDamage(player_attr.hp, player_attr.es)
                         * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                        * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                        * calculateMoreMultipliers(gem_ce_selected)
                         * calculateDamageTakenMultipliers(shock, curse_v)
                         | number : decimal_places
                         }}
@@ -313,7 +281,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses())
                             | number : decimal_places
@@ -344,7 +312,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected))
                             | number : decimal_places
@@ -366,7 +334,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected))
                             | number : decimal_places
@@ -377,7 +345,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected))
                             | number : decimal_places
@@ -399,7 +367,7 @@
                             {{
                             calculateBaseDamage(player_attr.hp, player_attr.es)
                             * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                            * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                            * calculateMoreMultipliers(gem_ce_selected)
                             * calculateDamageTakenMultipliers(shock, curse_v)
                             * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
                             | number : decimal_places
@@ -415,7 +383,7 @@
                     Final-DPS: {{
                     calculateBaseDamage(player_attr.hp, player_attr.es)
                     * calculateAdditiveMultipliers(player_attr.gic, player_attr.bd, player_attr.fd, player_attr.ed, player_attr.sd, player_attr.ad, player_attr.dot, gem_bd_selected)
-                    * calculateMoreMultipliers(gem_rf_selected, gem_rf_quality_selected, gem_ce_selected)
+                    * calculateMoreMultipliers(gem_ce_selected)
                     * calculateDamageTakenMultipliers(shock, curse_v)
                     * calculateResistedMultiplier(resist_base, calculateCurses(curse_f_selected, curse_ew_selected, curse_ew_quality_selected, curse_ee))
                     | number : decimal_places
@@ -712,12 +680,10 @@ angular.module('rfcalc', ['ui.bootstrap']).controller(
                 return  1 + (multiplier / 100);
             }
 
-            $scope.calculateMoreMultipliers = function (rf, rfq, ce) {
-                rf = typeof rf !== 'undefined' ? rf : 0;
-                rfq = typeof rfq !== 'undefined' ? rfq : 0;
+            $scope.calculateMoreMultipliers = function (ce) {
                 ce = typeof ce !== 'undefined' ? ce : 0;
 
-                var multiplier = rf + rfq + ce;
+                var multiplier = ce;
 
                 return 1 + ( multiplier / 100 );
             }
@@ -773,9 +739,7 @@ angular.module('rfcalc', ['ui.bootstrap']).controller(
                     cv: $scope.curse_v,
                     cee: $scope.curse_ee,
                     shock: $scope.shock,
-                    res: $scope.resist_base,
-                    rf: $scope.gem_rf_selected,
-                    rfq: $scope.gem_rf_quality_selected
+                    res: $scope.resist_base
                 };
                 $location.search(
                         parameters
@@ -898,18 +862,6 @@ angular.module('rfcalc', ['ui.bootstrap']).controller(
                 if (locSearch.res) {
                     $scope.resist_base = parseInt(
                             locSearch.res
-                    );
-                }
-
-                if (locSearch.rf) {
-                    $scope.gem_rf_selected = parseInt(
-                            locSearch.rf
-                    );
-                }
-
-                if (locSearch.rfq) {
-                    $scope.gem_rf_quality_selected = parseInt(
-                            locSearch.rfq
                     );
                 }
             }
