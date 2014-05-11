@@ -3,6 +3,10 @@
     <meta charset="utf8"/>
     <title>Righteous Fire Calculator</title>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <style type="text/css">
+        input, select { cursor:pointer; }
+        li { list-style: none; }
+    </style>
 </head>
 <body>
 <div ng-controller="MainCtrl" style="width: 1000px; margin:0 auto;">
@@ -268,12 +272,7 @@
                         <th scope="row">Set Base Resistance</th>
                         <td>
                             <div class="input-group">
-                                <div class="btn-group-justified">
-                                    <label class="btn btn-default" ng-model="resist_base" ng-change="updateHash()" btn-radio="0">0%</label>
-                                    <label class="btn btn-success" ng-model="resist_base" ng-change="updateHash()" btn-radio="25">25%</label>
-                                    <label class="btn btn-warning" ng-model="resist_base" ng-change="updateHash()" btn-radio="50">50%</label>
-                                    <label class="btn btn-danger" ng-model="resist_base" ng-change="updateHash()" btn-radio="75">75%</label>
-                                </div>
+                                <input type="range" class="form-control" ng-model="resist_base" ng-change="updateHash()">
                                 <span class="input-group-addon">{{ resist_base }}% reduction</span>
                             </div>
                         </td>
@@ -286,6 +285,15 @@
                             * calculateResistedMultiplier(resist_base, calculateCurses())
                             | number : decimal_places
                             }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Popular Resistance Values</th>
+                        <td colspan="2">
+                            <span style="color: grey">It's a bit bugged. Once you use the slider manually the clicks don't work anymore.. no clue, sorry! :D</span>
+                            <ul ng-repeat="mobs in resist_mob">
+                                <li><span class="btn btn-primary btn-xs" ng-click="updateResist(mobs.value)">&nbsp;&nbsp;&nbsp;{{ mobs.value }}&nbsp;&nbsp;&nbsp;</span> {{ mobs.name }}</li>
+                            </ul>
                         </td>
                     </tr>
                 </tbody>
@@ -302,7 +310,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">Curse Flamability</th>
+                        <th scope="row">Curse Flammability</th>
                         <td>
                             <select ng-model="curse_f_selected" ng-options="f.value as f.text for f in curse_f" ng-change="updateHash()"
                                     class="form-control">
@@ -657,6 +665,22 @@ angular.module('rfcalc', ['ui.bootstrap']).controller(
             $scope.shock_value = 30;
 
             $scope.resist_base = 75;
+            $scope.resist_mob = [
+                {name:"Dominus, High Templar", value:39},
+                {name:"Piety", value:45},
+                {name:"Vaal Oversoul (no data, 65  Fire Resistance assumed)", value:65},
+                {name:"Popular Value: 26 Fire Resistance", value:26},
+                {name:"Popular Value: 39 Fire Resistance", value:39},
+                {name:"Popular Value: 45 Fire Resistance", value:45},
+                {name:"Popular Value: 52 Fire Resistance", value:52},
+                {name:"Popular Value: 65 Fire Resistance", value:65},
+                {name:"Popular Value: 78 Fire Resistance", value:75},
+                {name:"Popular Value: 97 Fire Resistance", value:97},
+            ];
+
+            $scope.updateResist = function(value) {
+                $scope.resist_base = value;
+            }
 
             $scope.calculateBaseDamage = function (hp, es) {
                 hp = typeof hp !== 'undefined' ? hp : 0;
