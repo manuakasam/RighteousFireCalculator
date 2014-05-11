@@ -12,7 +12,7 @@ This is a very simple calculator to get the damage values for your righteous fir
         global_damage_increase in percent
        +burning_damage in percent
        +fire_damage in percent
-       +spell_damage in percent (to be implemented)
+       +spell_damage in percent
        +elemental_damage in percent
        +area_damage in percent
        +damage_over_time in percent
@@ -21,7 +21,8 @@ This is a very simple calculator to get the damage values for your righteous fir
     * more_multiplicators (
         shock_stacks * 30%
        +vulnerability in percent
-       +moce_spelldamage in percent (to be implemented)
+       +gem_rf_spelldamage in percent
+       +gem_rf_quality_spelldamage in percent
     )
     * mob_resistances - curses_multiplicators (
         flamability
@@ -35,7 +36,4 @@ This is a very simple calculator to get the damage values for your righteous fir
 Contributing and TODO
 =====================
 
-Following things need to be done:
-
-- implement spelldamage
-- implement more spelldamage
+Is there anything that needs to be done? Open an Issue or PR!
